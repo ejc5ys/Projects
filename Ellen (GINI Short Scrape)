@@ -1,0 +1,24 @@
+install.packages('rvest')
+library(rvest)
+x <- read_html('http://hdr.undp.org/en/content/income-gini-coefficient')
+x <- html_table(x, fill = T)
+
+# Pull out relevant table
+a <- x[[1]]
+#Remove empty rows
+a <- a[-c(1:4),]
+colnames(a) <- c("HDI Rank", "Country","2013 GINI Value")
+
+#Can we merge several tables of GINI indexes?
+y <- read_html('http://www.indexmundi.com/facts/indicators/SI.POV.GINI/rankings')
+y <- html_table(y, fill = T)
+
+#Pull relevant table, rename columns so they can be bound together.
+b <- y[[1]]
+colnames(b) <- c("World Bank Rank", "Country", "Most Recent Gini Value", "Year")
+
+#Using the all=TRUE trick to merge them effectively
+d <- merge(a, b,all=TRUE)
+table(d)
+
+#Next steps would be to remove duplicates, but I ran out of time!
